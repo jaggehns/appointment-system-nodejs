@@ -274,5 +274,14 @@ Use caching mechanisms, such as Redis, to cache frequently accessed data and red
 - **Validation**: Zod for schema validation
 - **Testing**: Jest and Supertest for thorough testing
 
+---
+
+## CI/CD
+
+- **Fly IO**: Deployed to Fly IO via CI/CD pipeline, happy to explain more if interested
+- **Supabase**: Deployed DB to Supabase
+
+
+
    
    
