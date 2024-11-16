@@ -20,27 +20,53 @@ const getFullConfiguration = async (): Promise<any> => {
 const updateFullConfiguration = async (configData: UpdateConfigurationInput['body']): Promise<any> => {
   const { slotDuration, maxSlots, startHour, endHour, daysOff, unavailableHours } = configData
 
-  const updatedConfig = await db.configuration.update({
-    where: { id: 1 },
-    data: { slotDuration, maxSlots, startHour, endHour }
+  // Identify a unique criterion to select the configuration.
+  // For example, let's assume you want to use `startHour` and `endHour` as the unique criteria.
+  let config = await db.configuration.findFirst({
+    where: { startHour, endHour }
   })
+
+  if (config != null) {
+    // Update the existing configuration
+    config = await db.configuration.update({
+      where: { id: config.id },
+      data: { slotDuration, maxSlots, startHour, endHour }
+    })
+  } else {
+    // Create a new configuration if none matches the criteria
+    config = await db.configuration.create({
+      data: { slotDuration, maxSlots, startHour, endHour }
+    })
+  }
 
   // Update days off
   if (Array.isArray(daysOff)) {
-    await db.daysOff.deleteMany()
+    // Assume you want to link days off to this specific configuration
+    // Clear existing days off associated with this configuration (if needed)
+    await db.daysOff.deleteMany({ where: { id: config.id } })
     for (const day of daysOff) {
-      await db.daysOff.create({ data: day })
+      await db.daysOff.create({
+        data: {
+          date: new Date(day.date), // Convert the string to a Date object
+          description: day.description,
+          id: config.id
+        }
+      })
     }
   }
 
+  // Update unavailable hours
   if (Array.isArray(unavailableHours)) {
-    await db.unavailableHours.deleteMany()
+    // Clear existing unavailable hours associated with this configuration (if needed)
+    await db.unavailableHours.deleteMany({ where: { id: config.id } })
     for (const hour of unavailableHours) {
-      await db.unavailableHours.create({ data: hour })
+      await db.unavailableHours.create({
+        data: { ...hour, id: config.id }
+      })
     }
   }
 
-  return updatedConfig
+  return config
 }
 
 export const configurationModel = {

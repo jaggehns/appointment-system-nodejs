@@ -13,8 +13,6 @@ model Appointment {
   dateTime     DateTime
   slotsBooked  Int      @default(0)
   createdAt    DateTime @default(now())
-
-  @@unique([dateTime])
 }
 
 model Configuration {

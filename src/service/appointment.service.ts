@@ -46,7 +46,38 @@ const getAvailableSlots = async (date: Date): Promise<AvailableSlot[]> => {
 
 const bookAppointment = async (dateTime: Date, slots: number): Promise<boolean> => {
   const config: UpdateConfigurationInput['body'] | null = await configurationModel.getFullConfiguration()
-  const maxSlots = config?.maxSlots ?? 1
+  if (config == null) {
+    throw new Error('Configuration not found')
+  }
+
+  const maxSlots = config.maxSlots ?? 1
+
+  const dateOnly = new Date(dateTime)
+  dateOnly.setUTCHours(0, 0, 0, 0)
+
+  const isDayOff = config.daysOff?.some((dayOff) => {
+    const dayOffDate = new Date(dayOff.date)
+    return dayOffDate.getTime() === dateOnly.getTime()
+  })
+
+  if (isDayOff ?? false) {
+    return false
+  }
+
+  const dayOfWeek = dateTime.toLocaleString('en-US', { weekday: 'long' })
+  const hours = dateTime.getHours()
+  const minutes = dateTime.getMinutes()
+  const timeString = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`
+
+  const isInUnavailableHours = config.unavailableHours?.some((unavailable) => {
+    return (
+      unavailable.dayOfWeek === dayOfWeek && timeString >= unavailable.startTime && timeString < unavailable.endTime
+    )
+  })
+
+  if (isInUnavailableHours ?? false) {
+    return false
+  }
 
   const existingAppointments = await appointmentModel.getAppointmentsForTime(dateTime)
   const totalSlotsBooked = existingAppointments.reduce((total, appt) => total + appt.slotsBooked, 0)
