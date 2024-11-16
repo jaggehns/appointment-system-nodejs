@@ -33,8 +33,6 @@ const getAvailableSlots = async (date: Date): Promise<AvailableSlot[]> => {
     const minutes = localTime.getMinutes()
     const appointmentTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`
 
-    console.info(`Checking appointment time: ${appointmentTime}`)
-
     slots.forEach((slot) => {
       if (slot.time === appointmentTime) {
         slot.available_slots -= appointment.slotsBooked
