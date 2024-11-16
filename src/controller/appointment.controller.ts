@@ -1,7 +1,6 @@
 import { type Request, type Response } from 'express'
 import { appointmentService } from '../service/appointment.service'
 import { HTTP_STATUS } from '../utils/httpsUtils'
-
 import type { CreateAppointmentInput } from '../schema/appointment.schema'
 
 export const getAvailableSlots = async (req: Request, res: Response): Promise<void> => {
@@ -18,12 +17,17 @@ export const getAvailableSlots = async (req: Request, res: Response): Promise<vo
 export const bookAppointment = async (req: Request, res: Response): Promise<void> => {
   const { date, time, slots }: CreateAppointmentInput['body'] = req.body
 
-  if (typeof date !== 'string' && typeof date !== 'number' && !(new Date(date) instanceof Date)) {
+  const parsedDate = new Date(date)
+  if (isNaN(parsedDate.getTime())) {
     res.status(HTTP_STATUS.BAD_REQUEST).send({ message: 'Invalid date format' })
     return
   }
 
-  const success = await appointmentService.bookAppointment(new Date(date), time, slots)
+  const [hours, minutes] = time.split(':').map(Number)
+  parsedDate.setHours(hours, minutes, 0, 0)
+  const dateTime = parsedDate
+
+  const success = await appointmentService.bookAppointment(dateTime, slots)
   if (!success) {
     res.status(HTTP_STATUS.CONFLICT).send({ message: 'Slot is already fully booked' })
     return

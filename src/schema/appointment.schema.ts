@@ -17,9 +17,3 @@ export const createAppointmentSchema = object({
 })
 
 export type CreateAppointmentInput = TypeOf<typeof createAppointmentSchema>
-
-export interface AppointmentInput {
-  date: CreateAppointmentInput['body']['date']
-  time: CreateAppointmentInput['body']['time']
-  slots: CreateAppointmentInput['body']['slots']
-}

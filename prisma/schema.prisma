@@ -1,6 +1,4 @@
-// This is your Prisma schema file
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
+// schema.prisma
 generator client {
   provider = "prisma-client-js"
 }
@@ -12,12 +10,11 @@ datasource db {
 
 model Appointment {
   id           Int      @id @default(autoincrement())
-  date         DateTime
-  time         DateTime
+  dateTime     DateTime
   slotsBooked  Int      @default(0)
   createdAt    DateTime @default(now())
 
-  @@unique([date, time])
+  @@unique([dateTime])
 }
 
 model Configuration {
