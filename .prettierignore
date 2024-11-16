@@ -1,0 +1,14 @@
+.eslintrc.json
+.prettierrc
+package.json
+tsconfig.json
+CHANGELOG.md
+README.md
+yarn.lock
+dist
+build
+public
+node_modules
+.yarnrc.yml
+supabase
+pnpm-lock.yaml

@@ -1,0 +1,28 @@
+{
+  "env": {
+    "es2021": true,
+    "node": true
+  },
+  "extends": "standard-with-typescript",
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "module",
+    "project": ["**/tsconfig.json"]
+  },
+  "plugins": ["@typescript-eslint"],
+  "ignorePatterns": ["**/build/*", "**/node-modules/*", "**/public/*", "**/tsconfig.json"],
+  "rules": {
+    "@typescript-eslint/restrict-template-expressions": "off",
+    "@typescript-eslint/space-before-function-paren": "off",
+    "@typescript-eslint/indent": "off",
+    "@typescript-eslint/no-misused-promises": [
+    "error",
+    {
+      "checksVoidReturn": {
+        "arguments": false
+      }
+    }
+  ]
+  }
+}

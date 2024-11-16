@@ -1,0 +1,33 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+echo 'Styling, testing and building your project before committing'
+
+# Check Prettier
+pnpm check-format ||
+(
+    echo 'Prettier Check Failed. Run pnpm format, add changes and try to commit it again';
+    false;
+)
+
+# Check ESlint
+pnpm check-lint ||
+(
+    echo 'Eslint Check Failed. Make the required changes listed above, add changes and try to commit again';
+    false;
+)
+
+# Check tsconfig
+pnpm check-types ||
+(
+    echo 'Failed type check. Make the changes required above, add changes and try to commit again';
+    false;
+)
+
+pnpm build ||
+(
+    echo 'Your build failed, view the errors above';
+    false;
+)
+
+echo 'Successful Commit'

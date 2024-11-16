@@ -1,0 +1,45 @@
+// This is your Prisma schema file
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Appointment {
+  id           Int      @id @default(autoincrement())
+  date         DateTime
+  time         DateTime
+  slotsBooked  Int      @default(0)
+  createdAt    DateTime @default(now())
+
+  @@unique([date, time])
+}
+
+model Configuration {
+  id           Int      @id @default(autoincrement())
+  slotDuration Int      @default(30)
+  maxSlots     Int      @default(1)
+  startHour    String   @default("09:00")
+  endHour      String   @default("18:00")
+  createdAt    DateTime @default(now())
+}
+
+model DaysOff {
+  id           Int      @id @default(autoincrement())
+  date         DateTime
+  description  String
+  createdAt    DateTime @default(now())
+}
+
+model UnavailableHours {
+  id           Int      @id @default(autoincrement())
+  dayOfWeek    String   
+  startTime    String  
+  endTime      String   
+  createdAt    DateTime @default(now())
+}
